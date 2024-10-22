@@ -12,5 +12,18 @@ export class MongoDeleteUserRepository implements IDeleteUserRepository {
     if (!user) {
       throw new Error("User not found")
     }
+
+    const { deletedCount } = await MongoClient.db.collection("users").deleteOne({ _id: new ObjectId(id) })
+
+    if (!deletedCount) {
+      throw new Error("User not deleted")
+    }
+
+    const { _id, ...rest } = user
+
+    return {
+      id: _id.toHexString(),
+      ...rest
+    }
   }
 }
